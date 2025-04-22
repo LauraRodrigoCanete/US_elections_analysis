@@ -1,0 +1,299 @@
+//////////////////////// CARGA
+
+/////////////////////////// 16
+MATCH (n)
+DETACH DELETE n;
+    
+LOAD CSV WITH HEADERS FROM 'file:///users16_neo4j.csv' AS row
+MERGE (u:User {user_id: row.userid})
+SET u.screen = row.User,
+	u.created_at = row.created_at,
+	u.verified = row.verified = 'True',  
+	u.followers = toInteger(row.followers),
+	u.following = toInteger(row.following),
+	u.nTweets = toInteger(row.nTweets);
+
+LOAD CSV WITH HEADERS FROM 'file:///edges16_neo4j.csv' AS row
+	MATCH (u1:User {screen: row.user1})
+	MATCH (u2:User {screen: row.user2})
+	MERGE (u1)-[r:SIMILAR]->(u2)
+	SET r.weight = toFloat(row.weight);
+
+MATCH (u:COMMON)
+REMOVE u:COMMON;
+LOAD CSV WITH HEADERS FROM 'file:///edges_common.csv' AS row
+WITH row
+WHERE toInteger(row.year) = 16
+MATCH (u1:User {screen: row.User1})
+MATCH (u2:User {screen: row.User2})
+MERGE (u1)-[r:COMMON]->(u2)
+SET r.n = toInteger(row.n),
+    r.Tweet = row.Tweet;
+
+MATCH (u:DEM)
+REMOVE u:DEM;
+MATCH (u:REP)
+REMOVE u:REP;
+
+LOAD CSV WITH HEADERS FROM 'file:///opinion_y.csv' AS row
+WITH row 
+WHERE row.year = '16'  // Filtrar solo las filas con año adecuado
+MATCH (u:User {screen: row.User}) // Buscar el nodo User con ese nombre
+SET u.manual = true,  
+    u.opinion = row.opinion // Asignar la opinión
+// Asignar la etiqueta DEM o REP según la opinión
+FOREACH (ignore IN CASE WHEN row.opinion = '1' THEN [1] ELSE [] END | SET u:DEM)
+FOREACH (ignore IN CASE WHEN row.opinion = '-1' THEN [1] ELSE [] END | SET u:REP)
+FOREACH (_ IN CASE WHEN row.opinion = '0' THEN [1] ELSE [] END | SET u.neutral = TRUE);		
+
+///////////////////////// 20
+MATCH (n)
+DETACH DELETE n;
+    
+LOAD CSV WITH HEADERS FROM 'file:///users20_neo4j.csv' AS row
+MERGE (u:User {user_id: row.userid})
+SET u.screen = row.User,
+	u.created_at = row.created_at,
+	u.verified = row.verified = 'True',  
+	u.followers = toInteger(row.followers),
+	u.following = toInteger(row.following),
+	u.nTweets = toInteger(row.nTweets);
+
+LOAD CSV WITH HEADERS FROM 'file:///edges20_neo4j.csv' AS row
+	MATCH (u1:User {screen: row.user1})
+	MATCH (u2:User {screen: row.user2})
+	MERGE (u1)-[r:SIMILAR]->(u2)
+	SET r.weight = toFloat(row.weight);
+	
+MATCH (u:COMMON)
+REMOVE u:COMMON;
+LOAD CSV WITH HEADERS FROM 'file:///edges_common.csv' AS row
+WITH row
+WHERE toInteger(row.year) = 20
+MATCH (u1:User {screen: row.User1})
+MATCH (u2:User {screen: row.User2})
+MERGE (u1)-[r:COMMON]->(u2)
+SET r.n = toInteger(row.n),
+    r.Tweet = row.Tweet;
+	
+	
+MATCH (u:DEM)
+REMOVE u:DEM;
+MATCH (u:REP)
+REMOVE u:REP;
+LOAD CSV WITH HEADERS FROM 'file:///opinion_y.csv' AS row 
+WITH row 
+WHERE row.year = '20' 
+MATCH (u:User {screen: row.User}) 
+SET u.manual = true,  
+    u.opinion = row.opinion
+FOREACH (_ IN CASE WHEN row.opinion = '1' THEN [1] ELSE [] END | SET u:DEM)
+FOREACH (_ IN CASE WHEN row.opinion = '-1' THEN [1] ELSE [] END | SET u:REP)
+FOREACH (_ IN CASE WHEN row.opinion = '0' THEN [1] ELSE [] END | SET u.neutral = TRUE);	
+	
+
+////////////////////////// 24
+MATCH (n)
+DETACH DELETE n;
+
+    LOAD CSV WITH HEADERS FROM 'file:///users24_neo4j.csv' AS row
+    MERGE (u:User {user_id: row.userid})
+    SET u.screen = row.User,
+        u.created_at = row.created_at,
+        u.verified = row.verified = 'True',  
+        u.followers = toInteger(row.followers),
+        u.following = toInteger(row.following),
+        u.nTweets = toInteger(row.nTweets);
+
+    LOAD CSV WITH HEADERS FROM 'file:///edges24_neo4j.csv' AS row
+        MATCH (u1:User {screen: row.user1})
+        MATCH (u2:User {screen: row.user2})
+        MERGE (u1)-[r:SIMILAR]->(u2)
+        SET r.weight = toFloat(row.weight);
+
+MATCH (u:COMMON)
+REMOVE u:COMMON;
+LOAD CSV WITH HEADERS FROM 'file:///edges_common.csv' AS row
+WITH row
+WHERE toInteger(row.year) = 24
+MATCH (u1:User {screen: row.User1})
+MATCH (u2:User {screen: row.User2})
+MERGE (u1)-[r:COMMON]->(u2)
+SET r.n = toInteger(row.n),
+    r.Tweet = row.Tweet;
+
+MATCH (u:DEM)
+REMOVE u:DEM;
+MATCH (u:REP)
+REMOVE u:REP;
+
+LOAD CSV WITH HEADERS FROM 'file:///opinion_y.csv' AS row
+WITH row 
+WHERE row.year = '24'  // Filtrar solo las filas con año adecuado
+MATCH (u:User {screen: row.User}) // Buscar el nodo User con ese nombre
+SET u.manual = true,  
+    u.opinion = row.opinion // Asignar la opinión
+// Asignar la etiqueta DEM o REP según la opinión
+FOREACH (ignore IN CASE WHEN row.opinion = '1' THEN [1] ELSE [] END | SET u:DEM)
+FOREACH (ignore IN CASE WHEN row.opinion = '-1' THEN [1] ELSE [] END | SET u:REP)	
+FOREACH (_ IN CASE WHEN row.opinion = '0' THEN [1] ELSE [] END | SET u.neutral = TRUE);
+
+	////////////////////////
+// RAND
+MATCH (u:User)
+RETURN u
+ORDER BY rand()
+LIMIT 20;
+
+		
+////////// CONTAGIO
+// 
+
+
+//// Contagio COMMON
+MATCH (u:User)
+WHERE NOT u:REP AND NOT u:DEM and u.neutral is null
+OPTIONAL MATCH (u)-[:COMMON]-(vecino:User)
+WITH u,
+     count(vecino) AS total_vecinos,
+     count(CASE WHEN vecino:REP THEN 1 END) AS num_REP,
+     count(CASE WHEN vecino:DEM THEN 1 END) AS num_DEM
+WHERE total_vecinos > 0
+WITH u, total_vecinos, num_REP, num_DEM,
+     toFloat(num_REP) / total_vecinos AS prop_REP,
+     toFloat(num_DEM) / total_vecinos AS prop_DEM
+// Condición para contagio por REP
+FOREACH (_ IN CASE WHEN prop_REP > 0.15 AND prop_DEM < 0.10 THEN [1] ELSE [] END |
+  SET u:REP, u.contagio = "COMMON"
+)
+// Condición para contagio por DEM
+FOREACH (_ IN CASE WHEN prop_DEM > 0.15 AND prop_REP < 0.10 THEN [1] ELSE [] END |
+  SET u:DEM, u.contagio = "COMMON"
+);
+		
+//// contagio SIMILARITY
+
+MATCH (u:User)
+WHERE NOT u:REP AND NOT u:DEM and u.neutral is null
+OPTIONAL MATCH (u)-[s:SIMILAR]-(vecino:User)
+WITH u,
+     avg(CASE WHEN vecino:REP THEN s.weight ELSE null END) AS media_REP,
+     avg(CASE WHEN vecino:DEM THEN s.weight ELSE null END) AS media_DEM
+// Contagio por REP
+FOREACH (_ IN CASE WHEN media_REP > 0.2 AND (media_DEM IS NULL OR media_DEM < 0.1) THEN [1] ELSE [] END |
+  SET u:REP, u.contagio = "SIMILAR"
+)
+// Contagio por DEM
+FOREACH (_ IN CASE WHEN media_DEM > 0.2 AND (media_REP IS NULL OR media_REP < 0.1) THEN [1] ELSE [] END |
+  SET u:DEM, u.contagio = "SIMILAR"
+);
+		
+
+/// Contagio MAJORITY
+//// si todas las conexiones son de un tipo poner ese tipo
+MATCH (u:User)
+WHERE NOT u:DEM AND NOT u:REP and u.neutral is null
+OPTIONAL MATCH (u)--(vecino:User)
+WITH u,
+     count(vecino) AS total_vecinos,
+     count(CASE WHEN vecino:DEM THEN 1 END) AS num_DEM,
+     count(CASE WHEN vecino:REP THEN 1 END) AS num_REP
+WHERE total_vecinos > 0
+WITH u, total_vecinos, num_DEM, num_REP,
+     toFloat(num_DEM) / total_vecinos AS prop_DEM,
+     toFloat(num_REP) / total_vecinos AS prop_REP
+// Si más del 90% son DEM
+FOREACH (_ IN CASE WHEN prop_DEM > 0.9 THEN [1] ELSE [] END |
+  SET u:DEM, u.contagio = "majority"
+)
+// Si más del 90% son REP
+FOREACH (_ IN CASE WHEN prop_REP > 0.9 THEN [1] ELSE [] END |
+  SET u:REP, u.contagio = "majority"
+);
+
+//////////////////////////////// Grafo nativo /////////////////////
+// Cálculo del grado
+
+//create projection
+CALL gds.graph.drop('neo4j', false);
+CALL gds.graph.project(
+    'neo4j',
+    ['User'],
+    {COM: {type: 'COMMON', orientation: 'UNDIRECTED'}}
+  );
+  
+// degree centrality  
+CALL gds.degree.mutate(
+  'neo4j',
+  {mutateProperty: 'common_degree'}
+  );
+  
+
+
+CALL gds.graph.nodeProperties.write(
+  'neo4j',
+  ['common_degree'],
+  ['User']
+  );
+
+
+
+		
+/////////////////////////////////// QUERIES ////////////////////////
+
+match p=(N:User) -->()
+where not N:REP AND NOT N:DEM AND N.common_degree>1 and N.neutral is null
+return p
+limit 20;
+
+CALL gds.graph.nodeProperty.stream(
+  'neo4j',
+  'common_degree',
+  ['User']
+  )
+YIELD nodeId, propertyValue
+RETURN
+  gds.util.asNode(nodeId).screen AS nombre,
+  propertyValue AS grado
+ORDER BY grado DESCENDING LIMIT 5
+
+
+// total similar y common
+MATCH ()-[r:SIMILAR]->()
+RETURN count(r) AS total_aristas_SIMILAR
+
+MATCH ()-[r:COMMON]->()
+RETURN count(r) 
+
+// Nodos de los que parte una similar o common
+match (N:User) -[:SIMILAR]-> () return count(distinct N)
+match (N:User) -[:COMMON]-> () return count(distinct N)
+
+
+// relaciones similar sin commony viceversa
+MATCH (u1:User)-[:SIMILAR]->(u2:User)
+WHERE NOT EXISTS {
+  MATCH (u1)-[:COMMON]-(u2)
+}
+RETURN count(*) AS total_similar_sin_common	
+
+// relaciones common sin similar
+MATCH (u1:User)-[:COMMON]->(u2:User)
+WHERE NOT EXISTS {
+  MATCH (u1)-[:SIMILAR]-(u2)
+}
+RETURN count(*) AS total_similar_sin_common	
+		
+// sin rep ni dem
+MATCH (u:User)
+WHERE NOT u:REP AND NOT u:DEM
+RETURN u 
+
+/////
+match (N:REP) return count(N);
+match (N:DEM) return count(N);
+
+match p=(N:User) -->()
+where not N:REP AND NOT N:DEM AND N.common_degree>1 and N.neutral is null
+return p;
+
