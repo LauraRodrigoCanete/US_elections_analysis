@@ -47,4 +47,6 @@ The repository is organized in folders with the files in them. Here we provide g
 <ul>
 <li> generate_sample_tweets: takes a sample of 50 users from the graph colored by each type of propagation, in total 150 user nodes.</li> 
 <li> evaluate_sample_tweets: it is used to classify the 150 user,year pairs manually. For each user and year it displays the tweets of that year and the person must enter as an input if the user appears to be a republican (rep) or a democrat (dem). Then when pressing enter the program saves it in a column of the dataframe and moves on to the next. At the end of the notebook the evaluated sample is stored as a csv file.</li>
+<li> checking_sample_contagion: compares the manual clasification of users with the one obtained from the label propagation processes to check the performance. Checks the performance of other variants of the method. Generates graphs and descriptive statistics about the classified users.
+</li>
 </ul>
