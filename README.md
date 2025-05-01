@@ -20,7 +20,7 @@ The repository is organized in folders with the files in them. Here we provide g
 <ul>
 <li>processing1: filters tweets that fit certain criteria (language, dates...) and only keeps political tweets.</li>
 
-<li>processing2: filters tweets and only keeps the ones that mention one political candidate. It also computes a series of descriptive statistics to see how the format of tweets has evolved over time.</li>
+<li>processing2: filters tweets and only keeps the ones that mention one political candidate.</li>
 </ul>
 
 **PART3_VECTORGRAPH:**
