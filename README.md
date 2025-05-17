@@ -1,4 +1,4 @@
-# US_elections_analysis
+# US Elections Analysis
 TFG Matemáticas 2024/25
 
 This is an academic project licensed under the GNU General Public License v3 with additional terms for commercial use. See the [LICENSE](./LICENSE) file for details.
